@@ -1,0 +1,19 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.9.7
+    working_directory: ~/app
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install Selenium
+          command: pip install selenium
+
+      - run:
+          name: Run tests
+          command: |
+            python teste.py
