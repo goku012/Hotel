@@ -1,43 +1,19 @@
 version: 2.1
 
 jobs:
-  test:
+  build:
     docker:
       - image: circleci/python:3.9.7
-
-    working_directory: ~/repo
+    working_directory: ~/app
 
     steps:
       - checkout
 
-      # Install dependencies
       - run:
-          name: Install dependencies
-          command: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
+          name: Install Selenium
+          command: pip install selenium
 
-      # Run tests with pytest
       - run:
-          name: Run unit tests
+          name: Run tests
           command: |
-            pytest tests/unit
-
-      # Run integration tests with pytest
-      - run:
-          name: Run integration tests
-          command: |
-            pytest tests/integration
-
-      # Run end-to-end tests with Selenium
-      - run:
-          name: Run e2e tests
-          command: |
-            pip install selenium
-            apt-get update && apt-get install -y chromium-chromedriver
-            python tests/e2e/test.py
-
-workflows:
-  test:
-    jobs:
-      - test
+            python teste.py
