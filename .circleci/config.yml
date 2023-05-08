@@ -1,26 +1,40 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#executor-job
+  build:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
+      - image: circleci/python:3.9.7
+    working_directory: ~/app
+
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
+      - run:
+          name: Install Dependencies
+          command: |
+            pip install -r requirements.txt
+            pip install nose
+            pip install pytest
+            pip install coverage
+
+      - run:
+          name: Run Unit Tests
+          command: |
+            coverage run --source=app -m nose tests/unit
+            coverage report -m
+
+      - run:
+          name: Run Integration Tests
+          command: |
+            coverage run --source=app -m nose tests/integration
+            coverage report -m
+
+      - run:
+          name: Run Acceptance Tests
+          command: |
+            pytest tests/acceptance
+
 workflows:
-  say-hello-workflow:
+  build_and_test:
     jobs:
-      - say-hello
+      - build
